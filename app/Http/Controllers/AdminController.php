@@ -130,6 +130,15 @@ class AdminController extends Controller
 
     }
 
+    public function miner(){
+        $arr = [
+            ['name'=>'初级','frozen_points'=>10000],
+            ['name'=>'中级','frozen_points'=>20000],
+            ['name'=>'高级','frozen_points'=>30000],
+        ];
+        return sucJsonResp($arr);
+    }
+
     public function editStatus(Request $request){
         $id = $request->id;
         if(!$id){
@@ -182,17 +191,23 @@ class AdminController extends Controller
                 } else{
                     $member->plan = 1;
                 }
-                $member->frozen_points = 20000;
+                $member->frozen_points = $request->frozen_points;
                 $member->save();
                 if($member->parent_id > 0){
                     $parent = Member::find($member->parent_id);
                     if($parent){
-                        $parent->active_points = $parent->active_points + 4000;
+                        if($parent->frozen_points > $member->frozen_points){
+                            $frozen = $member->frozen_points;
+                        }else{
+                            $frozen = $parent->frozen_points;
+                        }
+                        $parent_re = $frozen * 10 / 100;
+                        $parent->active_points = $parent->active_points + $parent_re;
                         $parent->save();
                         $didP = new DividendLogs();
                         $didP->user_id = $parent->id;
                         $didP->from_id = $member->id;
-                        $didP->points = 4000;
+                        $didP->points = $parent_re;
                         $didP->content = '邀请'.$member->phone.'分红';
                         $didP->save();
                     }
@@ -201,12 +216,18 @@ class AdminController extends Controller
                 if($member->superior_id > 0){
                     $superior = Member::find($member->superior_id);
                     if($superior){
-                        $superior->active_points = $superior->active_points + 2000;
+                        if($superior->frozen_points > $member->frozen_points){
+                            $frozen_s = $member->frozen_points;
+                        }else{
+                            $frozen_s = $parent->frozen_points;
+                        }
+                        $superior_re = $frozen_s * 5 / 100;
+                        $superior->active_points = $superior->active_points + $superior_re;
                         $superior->save();
                         $didS = new DividendLogs();
                         $didS->user_id = $superior->id;
                         $didS->from_id = $member->id;
-                        $didS->points = 2000;
+                        $didS->points = $superior_re;
                         $didS->content = '徒弟'.$parent->phone.'邀请'.$member->phone.'分红';
                         $didS->save();
                     }

@@ -96,6 +96,9 @@ class LoginController extends Controller
             if (!$inviter) {
                 return errJsonResp('邀请码错误，用户不存在');
             }
+            if ($inviter->finish == 0) {
+                return errJsonResp('此邀请码用户暂未通过审核');
+            }
             $parent_id = $inviter->id;
             $superior_id = $inviter->parent_id;
             //$plan = 0;

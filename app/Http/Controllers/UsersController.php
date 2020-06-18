@@ -45,6 +45,21 @@ class UsersController extends BaseController
         if(isset($type) && $type == 2){
             $lists = Member::where('superior_id',$user->id)->paginate(10);
         }
+        foreach ($lists as $k=>$v){
+
+            if($user->frozen_points > $v->frozen_points){
+                $frozen = $v->frozen_points;
+            }else{
+                $frozen = $user->frozen_points;
+            }
+            if($type == 1){
+                $su = 10;
+            }else{
+                $su = 5;
+            }
+            $re = $frozen * $su / 100;
+            $v->re = $re;
+        }
 
         $points = DividendLogs::where('user_id',$user->id)->where('sign','re')->sum('points');
 
