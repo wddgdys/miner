@@ -31,6 +31,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('member/audit', 'AdminController@memberStatus')->name('admin.member.audit');
         Route::get('member/miner', 'AdminController@miner')->name('admin.member.miner');
         Route::post('member/points', 'AdminController@setPoints')->name('admin.member.points');
+        Route::post('member/upgrade', 'AdminController@upgrade')->name('admin.member.upgrade');
 
         Route::get('senior', 'AdminController@senior')->name('admin.senior');
         Route::post('senior/goal', 'AdminController@addGoal')->name('admin.senior.goal');

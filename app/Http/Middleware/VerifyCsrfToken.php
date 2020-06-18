@@ -20,7 +20,7 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         //
-        '/admin/login','/admin/withdraw/audit','/admin/senior/goal','/admin/senior/dividend','/admin/member/audit','/admin/member/points','/admin/member/reset',
+        '/admin/login','/admin/withdraw/audit','/admin/senior/goal','/admin/senior/dividend','/admin/member/audit','/admin/member/points','/admin/member/upgrade','/admin/member/reset',
         '/api/login','/api/verification','/api/register','/api/send','/api/reset',
         '/api/game/user','/api/game/reset','/api/game/senior',
         '/api/user/withdraw'

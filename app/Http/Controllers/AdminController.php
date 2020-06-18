@@ -16,6 +16,8 @@ use Exception;
 class AdminController extends Controller
 {
     //
+    protected $parent_percent = 20;
+    protected $superior_percent = 10;
     /**
      * 登录
      */
@@ -193,6 +195,7 @@ class AdminController extends Controller
                 }
                 $member->frozen_points = $request->frozen_points;
                 $member->save();
+                $parent_re = 0;
                 if($member->parent_id > 0){
                     $parent = Member::find($member->parent_id);
                     if($parent){
@@ -201,7 +204,7 @@ class AdminController extends Controller
                         }else{
                             $frozen = $parent->frozen_points;
                         }
-                        $parent_re = $frozen * 20 / 100;
+                        $parent_re = $frozen * $this->parent_percent / 100;
                         $parent->active_points = $parent->active_points + $parent_re;
                         $parent->save();
                         $didP = new DividendLogs();
@@ -213,15 +216,15 @@ class AdminController extends Controller
                     }
 
                 }
-                if($member->superior_id > 0){
+                if($member->superior_id > 0 && $parent_re){
                     $superior = Member::find($member->superior_id);
                     if($superior){
                         if($superior->frozen_points > $member->frozen_points){
                             $frozen_s = $member->frozen_points;
                         }else{
-                            $frozen_s = $parent->frozen_points;
+                            $frozen_s = $superior->frozen_points;
                         }
-                        $superior_re = $frozen_s * 10 / 100;
+                        $superior_re = $frozen_s * $this->superior_percent / 100;
                         $superior->active_points = $superior->active_points + $superior_re;
                         $superior->save();
                         $didS = new DividendLogs();
@@ -240,6 +243,87 @@ class AdminController extends Controller
             }
         }else{
             return sucJsonResp('操作成功');
+        }
+    }
+
+    public function upgrade(Request $request){
+        $id = $request->id;
+        //升级后的等级
+        $points = $request->frozen_points;
+
+        $member = Member::find($id);
+
+        $parent_per = $this->parent_percent;
+        $superior_per = $this->superior_percent;
+        //上级返数额
+        $parent_diff = 0;
+        $superior_diff = 0;
+        DB::beginTransaction();
+        try {
+            //差额
+            $difference = $points - $member->frozen_points;
+            //上级返利
+            if($member->parent_id > 0){
+                $parent = Member::find($member->parent_id);
+                //升级后小于上级
+                if($parent->frozen_points > $points){
+                    $parent_diff = $difference;
+                }
+                //升级后和上级相等或高于上级
+                if($parent->frozen_points <= $points && $member->frozen_points != $parent->frozen_points){
+                    //一个档次
+                    $parent_diff = (int)$parent->frozen_points - (int)$member->frozen_points;
+                }
+                //上上级返利
+                if($member->superior_id > 0 && $parent_diff > 0) {
+                    $superior = Member::find($member->superior_id);
+                    //上上级返数额
+                    $superior_diff = 0;
+                    //升级后小于上级
+                    if($superior->frozen_points > $points){
+                        $superior_diff = $difference;
+                    }
+                    //升级后和上级相等或高于上级
+                    if($superior->frozen_points <= $points){
+                        if($parent->frozen_points <= $member->frozen_points){
+                            $superior_diff = $superior->frozen_points - $parent->frozen_points;
+                        }else{
+                            $superior_diff = $superior->frozen_points - $member->frozen_points;
+                        }
+                        //一个档次
+
+                    }
+                }
+            }
+            $member->frozen_points = $points;
+            $member->save();
+            if($parent_diff > 0){
+                $parent_re = $parent_diff * $parent_per / 100;
+                $parent->active_points = $parent->active_points + $parent_re;
+                $parent->save();
+                $didP = new DividendLogs();
+                $didP->user_id = $parent->id;
+                $didP->from_id = $member->id;
+                $didP->points = $parent_re;
+                $didP->content = '邀请'.$member->phone.'升级分红';
+                $didP->save();
+            }
+            if($superior_diff > 0){
+                $superior_re = $superior_diff * $superior_per / 100;
+                $superior->active_points = $superior->active_points + $superior_re;
+                $superior->save();
+                $didS = new DividendLogs();
+                $didS->user_id = $superior->id;
+                $didS->from_id = $member->id;
+                $didS->points = $superior_re;
+                $didS->content = '徒弟'.$parent->phone.'邀请'.$member->phone.'升级分红';
+                $didS->save();
+            }
+            DB::commit();
+            return sucJsonResp('操作成功');
+        }catch (Exception $e){
+            DB::rollBack();
+            return errJsonResp($e->getMessage());
         }
     }
 

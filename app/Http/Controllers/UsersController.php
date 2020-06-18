@@ -33,6 +33,16 @@ class UsersController extends BaseController
 
         $user = $this->user;
         $user->total = $user->frozen_points + $user->active_points;
+        $arr = [
+            10000=>'初级矿机',
+            20000=>'中级矿机',
+            30000=>'高级矿机',
+        ];
+        if($user->frozen_points > 0){
+            $user->miner = $arr[(int)$user->frozen_points];
+        }else{
+            $user->miner = '无矿机';
+        }
         return sucJsonResp($user);
     }
 
@@ -47,18 +57,7 @@ class UsersController extends BaseController
         }
         foreach ($lists as $k=>$v){
 
-            if($user->frozen_points > $v->frozen_points){
-                $frozen = $v->frozen_points;
-            }else{
-                $frozen = $user->frozen_points;
-            }
-            if($type == 1){
-                $su = 20;
-            }else{
-                $su = 10;
-            }
-            $re = $frozen * $su / 100;
-            $v->re = $re;
+            $v->re = DividendLogs::where('user_id',$user->id)->where('from_id',$v->id)->sum('points');
         }
 
         $points = DividendLogs::where('user_id',$user->id)->where('sign','re')->sum('points');
