@@ -97,11 +97,17 @@ class AdminController extends Controller
         $lists = $obj->selectRaw('id,parent_id,superior_id,top_id,phone,name,game,frozen_points,active_points,withdraw,plan,status,finish,created_at')->orderBy('created_at','desc')->paginate(10);
 
         $lines = MemberLogic::getLine();
+        $arr = [
+            10000=>'初级矿机',
+            20000=>'中级矿机',
+            30000=>'高级矿机',
+        ];
         foreach ($lists as $k=>&$v){
             $v->parent_phone = isset($v->parent) ? $v->parent->phone : '';
             $v->superior_phone = isset($v->superior) ? $v->superior->phone : '';
             $v->top_phone = isset($v->top) ? $v->top->phone : '';
             $v->key  = $v->id;
+            $v->minerStr = $v->frozen_points > 0 ? $arr[$v->frozen_points] : '无矿机';
             $children = getSonNode($lines,$v->id);
             $v->lines = count($children);
             unset($v->parent);
