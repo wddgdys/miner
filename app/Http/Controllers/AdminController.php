@@ -195,7 +195,7 @@ class AdminController extends Controller
                 }
                 $member->frozen_points = $request->frozen_points;
                 $member->save();
-                $m_phone = substr($member->phone,-1,4);
+                $m_phone = substr($member->phone,-4);
                 $parent_re = 0;
                 if($member->parent_id > 0){
                     $parent = Member::find($member->parent_id);
@@ -232,7 +232,7 @@ class AdminController extends Controller
                         $didS->user_id = $superior->id;
                         $didS->from_id = $member->id;
                         $didS->points = $superior_re;
-                        $p_phone = substr($parent->phone,-1,4);
+                        $p_phone = substr($parent->phone,-4);
                         $didS->content = '徒弟'.$p_phone.'邀请'.$m_phone.'分红';
                         $didS->save();
                     }
@@ -299,7 +299,7 @@ class AdminController extends Controller
             }
             $member->frozen_points = $points;
             $member->save();
-            $m_phone = substr($member->phone,-1,4);
+            $m_phone = substr($member->phone,-4);
             if($parent_diff > 0){
                 $parent_re = $parent_diff * $parent_per / 100;
                 $parent->active_points = $parent->active_points + $parent_re;
@@ -319,7 +319,7 @@ class AdminController extends Controller
                 $didS->user_id = $superior->id;
                 $didS->from_id = $member->id;
                 $didS->points = $superior_re;
-                $p_phone = substr($parent->phone,-1,4);
+                $p_phone = substr($parent->phone,-4);
                 $didS->content = '徒弟'.$p_phone.'邀请'.$m_phone.'升级分红';
                 $didS->save();
             }
