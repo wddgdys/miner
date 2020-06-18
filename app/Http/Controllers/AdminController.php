@@ -201,7 +201,7 @@ class AdminController extends Controller
                         }else{
                             $frozen = $parent->frozen_points;
                         }
-                        $parent_re = $frozen * 10 / 100;
+                        $parent_re = $frozen * 20 / 100;
                         $parent->active_points = $parent->active_points + $parent_re;
                         $parent->save();
                         $didP = new DividendLogs();
@@ -221,7 +221,7 @@ class AdminController extends Controller
                         }else{
                             $frozen_s = $parent->frozen_points;
                         }
-                        $superior_re = $frozen_s * 5 / 100;
+                        $superior_re = $frozen_s * 10 / 100;
                         $superior->active_points = $superior->active_points + $superior_re;
                         $superior->save();
                         $didS = new DividendLogs();

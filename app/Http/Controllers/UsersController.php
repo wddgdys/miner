@@ -53,9 +53,9 @@ class UsersController extends BaseController
                 $frozen = $user->frozen_points;
             }
             if($type == 1){
-                $su = 10;
+                $su = 20;
             }else{
-                $su = 5;
+                $su = 10;
             }
             $re = $frozen * $su / 100;
             $v->re = $re;
