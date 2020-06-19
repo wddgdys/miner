@@ -67,7 +67,7 @@ class UsersController extends BaseController
             /*$lines = MemberLogic::getLine();
             $children = getSonNode($lines,$user->id);
             $lines = count($children);*/
-            $lines = Member::where('plan','<>',2)->where('top_id',1)->count();
+            $lines = Member::where('top_id',$user->id)->count();
         }
 
         return sucJsonResp(compact('lists','points','lines'));
