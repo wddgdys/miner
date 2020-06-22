@@ -81,6 +81,7 @@ class UsersController extends BaseController
 
     public function withdraw(Request $request){
 
+        return errJsonResp('提现功能暂时关闭', 201);
         $user =  $this->user;
         $points = $request->points;
         if($points > $user->active_points){
