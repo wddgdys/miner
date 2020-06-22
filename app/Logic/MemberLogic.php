@@ -19,10 +19,10 @@ class MemberLogic{
      */
     public static function getTeamTop($pid){
         $parent = Member::find($pid);
-        if($parent->plan == 5){
-            $top = $parent->id;
-        }else{
+        if($parent->top_id > 0){
             $top = $parent->top_id;
+        }else{
+            $top = $parent->id;
         }
         return $top;
     }
