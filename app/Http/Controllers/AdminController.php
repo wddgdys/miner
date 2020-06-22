@@ -194,11 +194,12 @@ class AdminController extends Controller
             try {
                 $member = Member::find($id);
                 $member->finish = $finish;
-                if($member->parent_id == 0){
+                /*if($member->parent_id == 0){
                     $member->plan = 5;
                 } else{
-                    $member->plan = 1;
-                }
+
+                }*/
+                $member->plan = 1;
                 $member->frozen_points = $request->frozen_points;
                 $member->save();
                 $m_phone = substr($member->phone,-4);
@@ -252,6 +253,25 @@ class AdminController extends Controller
         }else{
             return sucJsonResp('操作成功');
         }
+    }
+
+    public function toVip(Request $request){
+
+        $id = $request->id;
+        if(!$id){
+            return errJsonResp('参数错误');
+        }
+        $plan = $request->plan;
+
+        try {
+            $member = Member::find($id);
+            $member->plan = $plan;
+            $member->save();
+            return sucJsonResp('操作成功');
+        }catch (Exception $e){
+            return errJsonResp($e->getMessage());
+        }
+
     }
 
     public function upgrade(Request $request){

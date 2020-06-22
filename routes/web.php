@@ -28,6 +28,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('member/children', 'AdminController@children')->name('admin.member.children');
         Route::post('member/reset', 'AdminController@reset')->name('admin.member.reset');
         Route::post('member/status', 'AdminController@editStatus')->name('admin.member.status');
+        Route::post('member/tovip', 'AdminController@toVip')->name('admin.member.tovip');
         Route::post('member/audit', 'AdminController@memberStatus')->name('admin.member.audit');
         Route::get('member/miner', 'AdminController@miner')->name('admin.member.miner');
         Route::post('member/points', 'AdminController@setPoints')->name('admin.member.points');
