@@ -23,6 +23,8 @@ Route::group(['prefix' => 'admin'], function () {
     Route::group(['middleware'=>['jwt.role:admin','checkadmin']], function () {
         Route::get('/withdraw', 'AdminController@withdraw')->name('admin.withdraw');
         Route::post('/withdraw/audit', 'AdminController@audit')->name('admin.withdraw.audit');
+        Route::post('/withdraw/config', 'AdminController@setConfig')->name('admin.withdraw.config');
+        Route::get('/withdraw/switch', 'AdminController@switch')->name('admin.withdraw.switch');
 
         Route::get('member', 'AdminController@member')->name('admin.member');
         Route::get('member/children', 'AdminController@children')->name('admin.member.children');
@@ -62,6 +64,7 @@ Route::group(['prefix' => 'api'],function () {
         Route::get('/lists', 'UsersController@lists')->name('user.lists');
         Route::get('/dividend', 'UsersController@dividend')->name('user.dividend');
         Route::post('/withdraw', 'UsersController@withdraw')->name('user.withdraw');
+        Route::get('/switch', 'UsersController@switch')->name('user.withdraw.switch');
         Route::get('/withdrawLog', 'UsersController@withdrawLog')->name('user.withdrawLog');
     });
 });

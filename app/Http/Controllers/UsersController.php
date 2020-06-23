@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Logic\MemberLogic;
+use App\Models\Config;
 use App\Models\DividendLogs;
 use App\Models\Member;
 use App\Models\Withdraw;
@@ -79,9 +80,14 @@ class UsersController extends BaseController
         return sucJsonResp($logs);
     }
 
+    public function switch(){
+        $config = Config::find(1);
+        $switch = $config->withdraw;
+        return sucJsonResp($switch);
+    }
+
     public function withdraw(Request $request){
 
-        return sucJsonResp('提现功能暂时关闭');
         $user =  $this->user;
         $points = $request->points;
         if($points > $user->active_points){
@@ -111,7 +117,7 @@ class UsersController extends BaseController
             $user->active_points -= $points;
             $user->save();
             DB::commit();
-            return sucJsonResp(compact('user'));
+            return sucJsonResp(compact('user'),'申请提现成功');
         }catch (\Exception $e){
             DB::rollBack();
             return errJsonResp($e->getMessage(),400);

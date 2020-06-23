@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Logic\DividendLogic;
 use App\Logic\MemberLogic;
 use App\Models\Admin;
+use App\Models\Config;
 use App\Models\DividendLogs;
 use App\Models\Member;
 use App\Models\Withdraw;
@@ -55,6 +56,20 @@ class AdminController extends Controller
         }
 
         return sucJsonResp(compact('lists'));
+    }
+
+    public function switch(){
+        $config = Config::find(1);
+        $switch = $config->withdraw;
+        return sucJsonResp($switch);
+    }
+
+    public function setConfig(Request $request){
+        $is_withdraw = $request->is_withdraw;
+        $config = Config::find(1);
+        $config->withdraw = $is_withdraw;
+        $config->save();
+        return sucJsonResp($is_withdraw,'操作成功');
     }
 
     public function audit(Request $request){
