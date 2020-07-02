@@ -44,6 +44,26 @@ class UsersController extends BaseController
         }else{
             $user->miner = '无矿机';
         }
+        $count_chu = $count_zho = $count_gao = 0;
+        if($user->plan == 5){
+            $team = Member::where('top_id',$user->id)->selectRaw('id,frozen_points')->get();
+            foreach ($team as $k=>$v){
+                switch ($v->frozen_points){
+                    case 10000:
+                        $count_chu ++;
+                        break;
+                    case 20000:
+                        $count_zho ++;
+                        break;
+                    case 30000:
+                        $count_gao ++;
+                        break;
+                }
+            }
+        }
+        $user->count_chu = $count_chu;
+        $user->count_zho = $count_zho;
+        $user->count_gao = $count_gao;
         return sucJsonResp($user);
     }
 
