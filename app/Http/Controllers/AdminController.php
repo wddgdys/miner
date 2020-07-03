@@ -47,12 +47,15 @@ class AdminController extends Controller
 
         $status = $request->status;
         $obj = new Withdraw();
+        $obj = $obj->with('member:id,phone');
         if(is_numeric($status)){
             $obj = $obj->where('status',$status);
         }
         $lists = $obj->orderBy('created_at','desc')->paginate(10);
         foreach ($lists as $k=>&$v){
             $v->key  = $v->id;
+            $v->phone = $v->member->phone;
+            unset($v->member);
         }
 
         return sucJsonResp(compact('lists'));
