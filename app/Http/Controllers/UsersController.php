@@ -113,7 +113,7 @@ class UsersController extends BaseController
         if($points > $user->active_points){
             return errJsonResp('积分不足', 403);
         }
-        $type = $request->type;
+        $type = $request->type ?? 1;
         if(!$type){
             return errJsonResp('缺少类型', 403);
         }
