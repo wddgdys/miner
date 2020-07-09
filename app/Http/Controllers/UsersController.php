@@ -111,11 +111,11 @@ class UsersController extends BaseController
         $user =  $this->user;
         $points = $request->points;
         if($points > $user->active_points){
-            return errJsonResp('积分不足', 201);
+            return errJsonResp('积分不足', 403);
         }
         $type = $request->type;
         if(!$type){
-            return errJsonResp('缺少类型', 201);
+            return errJsonResp('缺少类型', 403);
         }
         DB::beginTransaction();
         try {
